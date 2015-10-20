@@ -1,5 +1,6 @@
 package org.weeels.plugins.cardflight;
 
+import org.apache.cordova.PluginResult;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -8,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.getcardflight.models.Card;
 import com.getcardflight.models.CardFlight;
 import com.getcardflight.models.Reader;
 
@@ -19,10 +21,16 @@ public class CDVCardFlight extends CordovaPlugin {
   private CardFlightHandler handler;
   private CordovaInterface cdv;
 
+  private CallbackContext cardReadCallbackContext;
+  private CallbackContext readerAttachedCallbackContext;
+  private CallbackContext readerConnectingCallbackContext;
+  private CallbackContext readerDisconnectedCallbackContext;
+  private CallbackContext readerConnectedCallbackContext;
+  private CallbackContext onBeginSwipeCallbackContext;
+
   @Override
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
     super.initialize(cordova, webView);
-    handler = new CardFlightHandler(cordova);
     cdv = cordova;
   }
 
@@ -35,23 +43,23 @@ public class CDVCardFlight extends CordovaPlugin {
     } else if (action.equals("initializeReader")) {
       this.initializeReader(callbackContext);
     } else if (action.equals("onReaderAttached")) {
-      handler.onReaderAttached(callbackContext);
+      this.onReaderAttached(callbackContext);
     } else if (action.equals("onReaderConnecting")) {
-      handler.onReaderConnecting(callbackContext);
+      this.onReaderConnecting(callbackContext);
     } else if (action.equals("onSwipeDetected")) {
-      handler.onSwipeDetected(callbackContext);
+      this.onSwipeDetected(callbackContext);
     } else if (action.equals("onBatteryLow")) {
-      handler.onBatteryLow(callbackContext);
+      this.onBatteryLow(callbackContext);
     } else if (action.equals("onReaderDisconnected")) {
-      handler.onReaderDisconnected(callbackContext);
+      this.onReaderDisconnected(callbackContext);
     } else if (action.equals("tokenizeLastSwipe")) {
-      handler.tokenizeCard(callbackContext);
+      this.tokenizeCard(callbackContext);
     } else if (action.equals("onReaderConnected")) {
-      handler.onReaderConnected(callbackContext);
+      this.onReaderConnected(callbackContext);
     } else if (action.equals("watchForSwipe")) {
       this.watchForSwipe(callbackContext);
     } else if (action.equals("onCardRead")) {
-      handler.onCardRead(callbackContext);
+      this.onCardRead(callbackContext);
     } else {
       success = false;
     }
@@ -71,7 +79,6 @@ public class CDVCardFlight extends CordovaPlugin {
   }
 
   private void initializeReader(final CallbackContext callbackContext) {
-    log("CardFlight reader initializing");
     // cdv.getThreadPool().execute(new Runnable() {
     //   public void run() {
     //     reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
@@ -80,9 +87,14 @@ public class CDVCardFlight extends CordovaPlugin {
     //     // log("Reader AutoConfigHandler has cordova callback");
     //   }
     // });
-
-    reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
+    initializeReader();
     callbackContext.success("CardFlight reader initialized");
+  }
+
+  public void initializeReader(){
+    log("CardFlight reader initializing");
+    handler = new CardFlightHandler(this);
+    reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
   }
 
   private void watchForSwipe(CallbackContext callbackContext) {
@@ -90,6 +102,105 @@ public class CDVCardFlight extends CordovaPlugin {
     reader.beginSwipe();
     log("CardFlight reader awaiting swipe");
     callbackContext.success("CardFlight reader awaiting swipe");
+  }
+
+  public void onCardRead(CallbackContext callbackContext) {
+    log("Setting onCardRead callback");
+    cardReadCallbackContext = callbackContext;
+  }
+
+  public void onReaderAttached(CallbackContext callbackContext) {
+    log("Setting onReaderAttached callback");
+    readerAttachedCallbackContext = callbackContext;
+  }
+
+  public void onReaderConnecting(CallbackContext callbackContext) {
+    log("Setting onReaderConnecting callback");
+    readerConnectingCallbackContext = callbackContext;
+  }
+
+  public void onReaderDisconnected(CallbackContext callbackContext) {
+    log("Setting onReaderDisconnected callback");
+    readerDisconnectedCallbackContext = callbackContext;
+  }
+
+  public void onReaderConnected(CallbackContext callbackContext) {
+    log("Setting onReaderConnected callback");
+    readerConnectedCallbackContext = callbackContext;
+  }
+
+  public void onSwipeDetected(CallbackContext callbackContext) {
+    log("Setting onSwipeDetected callback");
+    onBeginSwipeCallbackContext = callbackContext;
+  }
+
+  public void onBatteryLow(CallbackContext callbackContext) {
+    logError("onBatteryLow not supported by Android CardFlight SDK");
+    callbackContext.error("Cannot use onBatteryLow on Android");
+  }
+
+  public void tokenizeCard(CallbackContext callbackContext) {
+    log("tokenizing card");
+    Card card = handler.getCard();
+    
+    if (card == null) {
+      callbackContext.error("No card to tokenize");
+    } else {
+      TokenizationHandler tokenHandler = new TokenizationHandler(card, callbackContext);
+      card.tokenize(tokenHandler, cordova.getActivity().getApplicationContext());
+    }
+  }
+
+  public void cardReadCallback() {
+    if (cardReadCallbackContext != null) {
+      sendSuccessToCallback(cardReadCallbackContext, "Card read successfully");
+    }
+  }
+
+  public void readerConnectingCallback() {
+    if (readerConnectingCallbackContext != null) {
+      sendSuccessToCallback(readerConnectingCallbackContext, "Reader is connecting");
+    }
+  }
+
+  public void readerAttachedCallback() {
+    if (readerAttachedCallbackContext != null) {
+      sendSuccessToCallback(readerAttachedCallbackContext, "Reader attached");
+    }
+
+    if (readerConnectedCallbackContext != null) {
+      sendSuccessToCallback(readerConnectedCallbackContext, "Reader attached");
+    }
+  }
+
+  public void readerDisconnectedCallback() {
+    if (readerDisconnectedCallbackContext != null) {
+      sendSuccessToCallback(readerDisconnectedCallbackContext, "Reader disconnected");
+    }
+  }
+
+  public void deviceBeginSwipe() {
+    if (onBeginSwipeCallbackContext != null) {
+      sendSuccessToCallback(onBeginSwipeCallbackContext, "Reader swipe begin");
+    }
+  }
+
+  public void readerFail(String msg) {
+    if (readerConnectingCallbackContext != null) {
+      sendErrorToCallback(readerConnectingCallbackContext, "Error connecting: "+msg);
+    }
+  }
+
+  private void sendSuccessToCallback(CallbackContext callbackContext, String message) {
+    PluginResult result = new PluginResult(PluginResult.Status.OK, message);
+    result.setKeepCallback(true);
+    callbackContext.sendPluginResult(result);
+  }
+
+  private void sendErrorToCallback(CallbackContext callbackContext, String message) {
+    PluginResult result = new PluginResult(PluginResult.Status.ERROR, message);
+    result.setKeepCallback(true);
+    callbackContext.sendPluginResult(result);
   }
 
   private void log(String s) {
