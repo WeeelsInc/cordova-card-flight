@@ -13,6 +13,30 @@ Authentication is done through your API Keys and processing is done through the 
 Change Log
 ----------
 
+v2.26
+
+- Fix missing card holder name in Rambler reader.
+- Update external libs.
+
+
+v2.24
+
+- New RestartReader API to restart reader while it connected.
+- Fix crash when performing swipe related operations on reader which lost connection. DeviceDisconnected callback would be called on that occasion. 
+- Fix bug in auto config process.
+- Improve stability of Payment View
+
+
+v2.23
+
+- Better Walker reader swipe detection.
+ 
+
+v2.21
+
+- Update more devices with the Walker reader.
+ 
+
 v2.20
 
 - Update more devices with the Walker reader.

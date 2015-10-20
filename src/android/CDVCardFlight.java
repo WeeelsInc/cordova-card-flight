@@ -35,7 +35,7 @@ public class CDVCardFlight extends CordovaPlugin {
     } else if (action.equals("initializeReader")) {
       this.initializeReader(callbackContext);
     } else if (action.equals("onReaderAttached")) {
-      handler.onReaderConnected(callbackContext);
+      handler.onReaderAttached(callbackContext);
     } else if (action.equals("onReaderConnecting")) {
       handler.onReaderConnecting(callbackContext);
     } else if (action.equals("onSwipeDetected")) {
