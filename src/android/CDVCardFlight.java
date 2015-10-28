@@ -87,14 +87,11 @@ public class CDVCardFlight extends CordovaPlugin {
     //     // log("Reader AutoConfigHandler has cordova callback");
     //   }
     // });
-    initializeReader();
-    callbackContext.success("CardFlight reader initialized");
-  }
-
-  public void initializeReader(){
     log("CardFlight reader initializing");
     handler = new CardFlightHandler(this);
-    reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
+    reader = new Reader(cdv.getActivity().getApplicationContext(), handler, new AutoConfigHandler(callbackContext));
+    // reader.startAutoConfigProcess();
+    callbackContext.success("CardFlight reader initialized");
   }
 
   private void watchForSwipe(CallbackContext callbackContext) {

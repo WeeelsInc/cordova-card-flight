@@ -46,7 +46,6 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   @Override
   public void readerIsDisconnected() {
     log("readerIsDisconnected callback");
-    // if (isConnected) parent.initializeReader();
     isConnected = false;
     parent.readerDisconnectedCallback();
   }
@@ -60,7 +59,6 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   @Override
   public void readerFail(String errorMessage, int errorCode) {
     logError("readerFail callback code:"+errorCode+", with message: " + errorMessage);
-    // if (isConnected) parent.initializeReader();
     isConnected = false;
   }
 
