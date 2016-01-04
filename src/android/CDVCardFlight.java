@@ -26,7 +26,8 @@ public class CDVCardFlight extends CordovaPlugin {
   private CallbackContext readerConnectingCallbackContext;
   private CallbackContext readerDisconnectedCallbackContext;
   private CallbackContext readerConnectedCallbackContext;
-  private CallbackContext onBeginSwipeCallbackContext;
+  private CallbackContext readerBatteryLowCallbackContext;
+  private CallbackContext onSwipeDetectedCallbackContext;
 
   @Override
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -131,12 +132,12 @@ public class CDVCardFlight extends CordovaPlugin {
 
   public void onSwipeDetected(CallbackContext callbackContext) {
     log("Setting onSwipeDetected callback");
-    onBeginSwipeCallbackContext = callbackContext;
+    onSwipeDetectedCallbackContext = callbackContext;
   }
 
   public void onBatteryLow(CallbackContext callbackContext) {
-    logError("onBatteryLow not supported by Android CardFlight SDK");
-    callbackContext.error("Cannot use onBatteryLow on Android");
+    log("Setting onBatteryLow callback")
+    readerBatteryLowCallbackContext = callbackContext;
   }
 
   public void tokenizeCard(CallbackContext callbackContext) {
@@ -151,9 +152,19 @@ public class CDVCardFlight extends CordovaPlugin {
     }
   }
 
-  public void cardReadCallback() {
+  public void readerBatteryLow() {
+    if (readerBatteryLowCallbackContext != null) {
+      sendSuccessToCallback(readerBatteryLowCallbackContext, "Reader battery low");
+    }
+  }
+
+  public void cardReadCallback(boolean success, String errorMessage) {
     if (cardReadCallbackContext != null) {
-      sendSuccessToCallback(cardReadCallbackContext, "Card read successfully");
+      if (success) {
+        sendSuccessToCallback(cardReadCallbackContext, "Card read");
+      } else {
+        sendErrorToCallback(cardReadCallbackContext, errorMessage);
+      }
     }
   }
 
@@ -167,7 +178,9 @@ public class CDVCardFlight extends CordovaPlugin {
     if (readerAttachedCallbackContext != null) {
       sendSuccessToCallback(readerAttachedCallbackContext, "Reader attached");
     }
+  }
 
+  public void readerConnectedCallback() {
     if (readerConnectedCallbackContext != null) {
       sendSuccessToCallback(readerConnectedCallbackContext, "Reader attached");
     }
@@ -179,9 +192,9 @@ public class CDVCardFlight extends CordovaPlugin {
     }
   }
 
-  public void deviceBeginSwipe() {
-    if (onBeginSwipeCallbackContext != null) {
-      sendSuccessToCallback(onBeginSwipeCallbackContext, "Reader swipe begin");
+  public void onSwipeDetected() {
+    if (onSwipeDetectedCallbackContext != null) {
+      sendSuccessToCallback(onSwipeDetectedCallbackContext, "Reader swipe detected");
     }
   }
 

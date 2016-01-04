@@ -13,6 +13,26 @@ Authentication is done through your API Keys and processing is done through the 
 Change Log
 ----------
 
+v3.0.7
+
+- New CardFlightError class
+- Bug fixes
+
+v3.0.6
+
+- Increased Android M support
+- Added serializable interface support for Card object
+
+v3.0.5
+
+- Bug fixes
+
+v3.0.4
+
+- Added EMV support.
+- Update external libs.
+- Bug fixes and improved stability.
+
 v2.26
 
 - Fix missing card holder name in Rambler reader.
@@ -88,6 +108,7 @@ Import the cardflight-android folder as a library project into your application.
 ### Installation
 
 ```
+<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />	
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

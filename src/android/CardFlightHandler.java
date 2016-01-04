@@ -1,6 +1,7 @@
 package org.weeels.plugins.cardflight;
 
 import com.getcardflight.models.Card;
+import com.getcardflight.models.CardFlightError;
 import com.getcardflight.interfaces.*;
 import android.util.Log;
 
@@ -24,10 +25,30 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   }
 
   @Override
-  public void readerCardResponse(Card c) {
-    log("readerCardResponse callback");
-    card = c;
-    parent.cardReadCallback();
+  public void readerBatteryLow() {
+    log("readerBatteryLow callback");
+    parent.readerBatteryLow();
+  }
+
+  @Override
+  public void readerCardResponse(Card c, CardFlightError error) {
+    if (error == null) {
+      log("readerCardResponse callback");
+      card = c;
+      parent.cardReadCallback(true, "Success");
+    } else {
+      log("readerCardResponse callback with error: "+error.getMessage());
+      parent.cardReadCallback(false, "Error reading card: "+error.getMessage());
+    }
+  }
+
+  @Override
+  public void readerIsConnected(boolean connected, CardFlightError error) {
+    if (error == null) {
+      parent.readerConnectedCallback();
+    } else {
+      parent.readerFail(error.getMessage());
+    }
   }
 
   @Override
@@ -52,9 +73,9 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   }
 
   @Override
-  public void deviceBeginSwipe() {
-    log("deviceBeginSwipe callback");
-    parent.deviceBeginSwipe();
+  public void readerSwipeDetected() {
+    log("readerSwipeDetected callback");
+    parent.onSwipeDetected();
   }
 
   @Override
