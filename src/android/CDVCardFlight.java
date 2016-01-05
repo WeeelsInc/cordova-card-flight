@@ -136,7 +136,7 @@ public class CDVCardFlight extends CordovaPlugin {
   }
 
   public void onBatteryLow(CallbackContext callbackContext) {
-    log("Setting onBatteryLow callback")
+    log("Setting onBatteryLow callback");
     readerBatteryLowCallbackContext = callbackContext;
   }
 
