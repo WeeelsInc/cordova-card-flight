@@ -49,6 +49,7 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
 
   @Override
   public void readerIsConnected(boolean connected, CardFlightError error) {
+    log("readerIsConnected callback");
     if (error == null) {
       parent.readerConnectedCallback();
     } else {

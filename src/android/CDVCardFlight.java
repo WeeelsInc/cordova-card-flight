@@ -182,7 +182,7 @@ public class CDVCardFlight extends CordovaPlugin {
 
   public void readerConnectedCallback() {
     if (readerConnectedCallbackContext != null) {
-      sendSuccessToCallback(readerConnectedCallbackContext, "Reader attached");
+      sendSuccessToCallback(readerConnectedCallbackContext, "Reader connected");
     }
   }
 
