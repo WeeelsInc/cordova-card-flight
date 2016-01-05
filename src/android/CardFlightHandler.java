@@ -79,7 +79,14 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   }
 
   @Override
+  public void deviceBeginSwipe() {
+    // Deprecated in SDK v3.0.4
+  }
+
+
+  @Override
   public void readerFail(String errorMessage, int errorCode) {
+    // Deprecated in SDK v3.0.4
     logError("readerFail callback code:"+errorCode+", with message: " + errorMessage);
     // if (isConnected) parent.initializeReader();
     isConnected = false;

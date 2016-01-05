@@ -148,7 +148,7 @@ public class CDVCardFlight extends CordovaPlugin {
       callbackContext.error("No card to tokenize");
     } else {
       TokenizationHandler tokenHandler = new TokenizationHandler(card, callbackContext);
-      card.tokenize(tokenHandler, cordova.getActivity().getApplicationContext());
+      card.tokenize(cordova.getActivity().getApplicationContext(), tokenHandler);
     }
   }
 

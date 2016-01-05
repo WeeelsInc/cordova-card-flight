@@ -30,9 +30,10 @@ public class TokenizationHandler implements CardFlightTokenizationHandler {
   }
 
   @Override
-  public void tokenizationFailed(String error, int errorCode) {
-    logError(error);
-    tokenizeCallbackContext.error(error);
+  public void tokenizationFailed(CardFlightError error) {
+    String msg = "Tokenization failed: "+error.getMessage();
+    logError(error.toString());
+    tokenizeCallbackContext.error("Tokenization failed: "+error.getMessage());
   }
 
   private void log(String s) {
