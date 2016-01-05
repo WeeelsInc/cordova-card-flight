@@ -5,7 +5,10 @@ import com.getcardflight.models.CardFlightError;
 import com.getcardflight.models.Charge;
 import com.getcardflight.models.CFEMVMessage;
 import com.getcardflight.interfaces.*;
+
 import android.util.Log;
+
+import java.util.ArrayList;
 
 public class CardFlightHandler implements CardFlightDeviceHandler {
   
