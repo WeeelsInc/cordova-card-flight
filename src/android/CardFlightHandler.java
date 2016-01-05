@@ -79,6 +79,17 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
   }
 
   @Override
+  public void readerSwipeDidCancel() {
+    log("readerSwipeDidCancel callback, no cordova-layer method to call");
+  }
+
+  @Override
+  public void readerNotDetected() {
+    log("readerNotDetected callback, no cordova-layer method to call");
+    isConnected = false;
+  }
+
+  @Override
   public void deviceBeginSwipe() {
     // Deprecated in SDK v3.0.4
   }

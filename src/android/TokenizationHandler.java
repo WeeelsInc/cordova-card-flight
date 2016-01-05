@@ -2,6 +2,7 @@ package org.weeels.plugins.cardflight;
 
 import org.apache.cordova.CallbackContext;
 import com.getcardflight.interfaces.*;
+import com.getcardflight.models.CardFlightError;
 import com.getcardflight.models.Card;
 
 import android.util.Log;
