@@ -2,6 +2,8 @@ package org.weeels.plugins.cardflight;
 
 import com.getcardflight.models.Card;
 import com.getcardflight.models.CardFlightError;
+import com.getcardflight.models.Charge;
+import com.getcardflight.models.CFEMVMessage;
 import com.getcardflight.interfaces.*;
 import android.util.Log;
 
@@ -101,6 +103,60 @@ public class CardFlightHandler implements CardFlightDeviceHandler {
     logError("readerFail callback code:"+errorCode+", with message: " + errorMessage);
     // if (isConnected) parent.initializeReader();
     isConnected = false;
+  }
+
+  // *********************************************
+  // **
+  // ** UNHANDLED, EMV Chip Reader implementation
+  // **
+
+  @Override
+  public void emvTransactionResult(Charge charge, boolean requiresSignature, CFEMVMessage message) {
+    if (charge == null) {
+     logError(message.getMessage());
+    } else if (requiresSignature) {
+      logError(message.getMessage() + " needs signature");
+    } else {
+      logError(message.getMessage() + " no CVM");
+    }
+  }
+
+  @Override
+  public void emvRequestApplicationSelection(ArrayList appList) {
+    log("Multiple AIDs available");
+
+    // Implement method to select which AID,
+    // then call - Reader.getDefault(context).emvSelectApplication(aidIndex);
+  }
+
+  @Override
+  public void emvMessage(CFEMVMessage message) {
+    log(message.getMessage());
+  }
+
+  @Override
+  public void emvCardResponse(String last4, String cardType) {
+    log("Charge " + cardType + "-" + last4);
+  }
+
+  @Override
+  public void emvErrorResponse(CardFlightError error) {
+    logError("Error: " + error.getMessage());
+  }
+
+  @Override
+  public void emvAmountRequested() {
+    // prompt for amount - doesn't happen if amount properly set
+  }
+
+  @Override
+  public void emvCardDipped() {
+    log("Card dipped");
+  }
+
+  @Override
+  public void emvCardRemoved() {
+    log("Card removed");
   }
 
   private void log(String s) {
