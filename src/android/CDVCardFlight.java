@@ -95,12 +95,17 @@ public class CDVCardFlight extends CordovaPlugin {
   public void initializeReader(){
     log("CardFlight reader initializing");
     handler = new CardFlightHandler(this);
-    reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
+    Reader.getDefault(cdv.getActivity().getApplicationContext())
+          .setDeviceHandler(handler)
+          .setAutoConfigHandler(new AutoConfigHandler(this));
+    // reader = new Reader(cdv.getActivity().getApplicationContext(), handler);
   }
 
   private void watchForSwipe(CallbackContext callbackContext) {
     handler.resetCard();
-    reader.beginSwipe();
+    // reader.beginSwipe();
+    Reader.getDefault(cdv.getActivity().getApplicationContext())
+          .beginSwipe();
     log("CardFlight reader awaiting swipe");
     callbackContext.success("CardFlight reader awaiting swipe");
   }
@@ -202,6 +207,12 @@ public class CDVCardFlight extends CordovaPlugin {
     if (readerConnectingCallbackContext != null) {
       sendErrorToCallback(readerConnectingCallbackContext, "Error connecting: "+msg);
     }
+  }
+
+  public void autoConfigFailed(String msg) {
+  }
+
+  public void autoConfigFinished(String msg) {
   }
 
   private void sendSuccessToCallback(CallbackContext callbackContext, String message) {

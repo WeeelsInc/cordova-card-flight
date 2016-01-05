@@ -1,15 +1,15 @@
 package org.weeels.plugins.cardflight;
 
 import org.apache.cordova.CallbackContext;
-import com.getcardflight.interfaces.*;
+import com.getcardflight.interfaces.CardFlightAutoConfigHandler;
 import android.util.Log;
 
 public class AutoConfigHandler implements CardFlightAutoConfigHandler {
 
-  private CallbackContext callbackContext;
+  private CDVCardFlight parent;
 
-  public AutoConfigHandler(CallbackContext ctx) {
-    callbackContext = ctx;
+  public AutoConfigHandler(CDVCardFlight p) {
+    parent = p;
   }
 
   @Override
@@ -20,13 +20,13 @@ public class AutoConfigHandler implements CardFlightAutoConfigHandler {
   @Override
   public void autoConfigFinished() {
     log("AutoConfig successful");
-    callbackContext.success("Initialization success");
+    parent.autoConfigFinished("Initialization success");
   }
 
   @Override
   public void autoConfigFailed() {
     logError("AutoConfig failed");
-    callbackContext.error("Initialization failed: AutoConfig failed");
+    parent.autoConfigFailed("Initialization failed: AutoConfig failed");
   }
 
   private void log(String s) {
