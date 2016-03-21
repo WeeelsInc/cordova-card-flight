@@ -50,7 +50,7 @@
             <uses-permission android:name="android.permission.INTERNET" />
         </config-file>
 
-        <lib-file src="src/android/libs/cardflight-v3.0.7.jar" />
+        <lib-file src="src/android/libs/cardflight-v3.1.jar" />
         <source-file src="src/android/CDVCardFlight.java" target-dir="src/org/weeels/plugins/cardFlight" />
         <source-file src="src/android/CardFlightHandler.java" target-dir="src/org/weeels/plugins/cardFlight" />
         <source-file src="src/android/TokenizationHandler.java" target-dir="src/org/weeels/plugins/cardFlight" />
